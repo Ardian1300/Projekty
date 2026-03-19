@@ -1,6 +1,6 @@
 package loginSystem;
 
-public class Main {
+public class LoginTest {
     public static void main(String[] args) {
 
         User admin = new AdminUser("Adrian", "Adelajza1", UserRole.ADMIN);

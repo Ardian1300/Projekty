@@ -1,19 +1,19 @@
-package systemRezerwacjiSal;
+import systemRezerwacjiSal.ConferenceRoom;
+import systemRezerwacjiSal.Room;
+import systemRezerwacjiSal.RoomType;
+import systemRezerwacjiSal.TrainingRoom;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-public class Main {
+public class streamTest {
     public static void main(String[] args) {
 
         List<Room> rooms = new ArrayList<>();
 
-
-        rooms.add( new ConferenceRoom("Sala Bankietowa",250,RoomType.MEDIUM));
+        rooms.add( new ConferenceRoom("Sala Bankietowa",250, RoomType.MEDIUM));
         rooms.add( new ConferenceRoom("Sala Biurowa",35,RoomType.SMALL));
         rooms.add( new ConferenceRoom("Sala Operowa",2130,RoomType.LARGE));
         rooms.add( new TrainingRoom("Pokój do ćwiczeń",15,RoomType.SMALL,true));
@@ -21,39 +21,13 @@ public class Main {
         rooms.add( new TrainingRoom("Hala sportowa",350,RoomType.LARGE,true));
 
         try{
-            rooms.get(1).reserve(59);
+            rooms.get(2).reserve(35);
             System.out.println("Dostępne miejsca: " + rooms.get(1).getAvailableSpot());
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
 
-        try{
-            rooms.get(2).reserve(51);
-            System.out.println("Dostępne miejsca: " + rooms.get(2).getAvailableSpot());
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-
-        try{
-            rooms.get(3).reserve(75);
-            System.out.println("Dostępne miejsca: " + rooms.get(3).getAvailableSpot());
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-
-        try{
-            rooms.get(4).reserve(45);
-            System.out.println("Dostępne miejsca: " + rooms.get(4).getAvailableSpot());
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-
-        try{
-            rooms.get(5).reserve(5);
-            System.out.println("Dostępne miejsca: " + rooms.get(5).getAvailableSpot());
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
+        //Testy Streama i jego metod
 
         List<Room> availableRooms = rooms.stream().filter(room -> !room.isBooked()).toList();
         // sprawdzanie które sale są niezarezerwowane , wpierw zamienia na stream sprawdza warunek i wraca do listy
@@ -97,7 +71,39 @@ public class Main {
         boolean allValid = rooms.stream()
                 .allMatch(room -> room.getCapacity() > 0); //czy wszytskie sale maja capacity > 0
 
+        System.out.println("Czy wszystkie sale mają capacity > 0: " + allValid);
+
         boolean hasLarge = rooms.stream()
                 .anyMatch(room -> room.getType() == RoomType.LARGE); //czy istnieje sala typu LARGE
+
+        System.out.println("Czy istnieją sale typu large " + hasLarge);
+
+        List<TrainingRoom> training = rooms.stream().filter(TrainingRoom.class::isInstance).map(TrainingRoom.class::cast).toList();
+
+        training.forEach(r -> System.out.println(r.getName()));
+
+        long projector = training.stream().filter(r ->!r.isHasProjector()).count();
+
+        System.out.println("Bez projektora: " + projector);
+
+        Optional<Room> twenty = rooms.stream().filter(room -> room.getAvailableSpot() > 20).findFirst();
+
+        twenty.ifPresent(r -> System.out.println(r.getName()));
+
+        List<Room> small = rooms.stream().filter(r -> r.getType() == RoomType.SMALL).toList();
+        small.forEach(r -> System.out.println(r.getName()));
+
+        long fifty = rooms.stream().filter(r -> r.getCapacity() > 50).count();
+        System.out.println("Sal z pojemnoscią powyzej 50 jest: " + fifty);
+
+        boolean test1 = rooms.stream().anyMatch(r->r.getCapacity() >100 && !r.isBooked());
+        System.out.println("czy istnieje wolna sala z ponad 100 miejscami: " + test1);
+
+
+        Optional<Room> mediumRoom = rooms.stream()
+                .filter(room -> room.getType() == RoomType.MEDIUM)  // pierwsza sala typu small
+                .findFirst(); //.findFirst() NIE zwraca Room, tylko Optional<Room> bo mozę nic nie znaleźć
+
+        mediumRoom.ifPresent(r -> System.out.println(r.getName()));
     }
 }

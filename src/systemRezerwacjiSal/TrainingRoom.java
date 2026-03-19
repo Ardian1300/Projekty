@@ -33,4 +33,7 @@ public class TrainingRoom extends Room implements Reservable{
         return getAvailableSpot();
     }
 
+    public boolean isHasProjector() {
+        return hasProjector;
+    }
 }
