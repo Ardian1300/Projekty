@@ -8,7 +8,17 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
-public class streamTest {
+public class StreamTest {
+
+    static void assertTrue(boolean condition, String testName){
+        System.out.println(testName);
+        if(condition){
+            System.out.println("TEST PASSED");
+        }else{
+            System.out.println("TEST FAILED");
+        }
+    }
+
     public static void main(String[] args) {
 
         List<Room> rooms = new ArrayList<>();
@@ -68,16 +78,6 @@ public class streamTest {
 
         System.out.println("Czy są błędne dane: " + invalidData);
 
-        boolean allValid = rooms.stream()
-                .allMatch(room -> room.getCapacity() > 0); //czy wszytskie sale maja capacity > 0
-
-        System.out.println("Czy wszystkie sale mają capacity > 0: " + allValid);
-
-        boolean hasLarge = rooms.stream()
-                .anyMatch(room -> room.getType() == RoomType.LARGE); //czy istnieje sala typu LARGE
-
-        System.out.println("Czy istnieją sale typu large " + hasLarge);
-
         List<TrainingRoom> training = rooms.stream().filter(TrainingRoom.class::isInstance).map(TrainingRoom.class::cast).toList();
 
         training.forEach(r -> System.out.println(r.getName()));
@@ -94,7 +94,7 @@ public class streamTest {
         small.forEach(r -> System.out.println(r.getName()));
 
         long fifty = rooms.stream().filter(r -> r.getCapacity() > 50).count();
-        System.out.println("Sal z pojemnoscią powyzej 50 jest: " + fifty);
+        System.out.println("Sal z pojemnością powyżej 50 jest: " + fifty);
 
         boolean test1 = rooms.stream().anyMatch(r->r.getCapacity() >100 && !r.isBooked());
         System.out.println("czy istnieje wolna sala z ponad 100 miejscami: " + test1);
@@ -105,5 +105,32 @@ public class streamTest {
                 .findFirst(); //.findFirst() NIE zwraca Room, tylko Optional<Room> bo mozę nic nie znaleźć
 
         mediumRoom.ifPresent(r -> System.out.println(r.getName()));
+
+        boolean hasLarge = rooms.stream()
+                .anyMatch(room -> room.getType() == RoomType.LARGE); //czy istnieje sala typu LARGE
+
+        assertTrue(hasLarge,"Czy istnieje sala typu LARGE");
+
+        boolean allValid = rooms.stream()
+                .allMatch(room -> room.getCapacity() > 0); //czy wszystkie sale maja capacity > 0
+
+        assertTrue(allValid,"Czy wszystkie sale mają capacity >0");
+
+        boolean fiveHundred = rooms.stream()
+                .anyMatch(room -> room.getCapacity() > 500); //czy jakaś sala z powyzej 500 capacity
+
+        assertTrue(!fiveHundred,"Czy Nie istnieje sala mają capacity > 500"); // oczekuje ze nie ma takiej sali dlatego !fiveHundred
+
+        boolean salaA = rooms.stream()
+                .anyMatch(room -> room.getName().equals("Sala A"));
+
+        assertTrue(salaA,"Czy istnieje sala o nazwie Sala A");
+
+        boolean salaX = rooms.stream()
+                .anyMatch(room -> room.getName().equals("Sala X"));
+
+        assertTrue(!salaX,"Czy NIe istnieje sala o nazwie Sala X"); // oczekuje ze nie ma takiej sali dlatego !salaX
+
+
     }
 }
